@@ -41,7 +41,7 @@
     "typescript": "^5.8.3"
   },
   "lint-staged": {
-    "*.{ts}": [
+    "*.ts": [
       "pnpm lint:staged",
       "pnpm format"
     ]
