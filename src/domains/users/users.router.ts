@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express'
-import { createUser, getAllUsers } from './users.service'
+import { createUser, deleteUser, getAllUsers } from './users.service'
 import { CreateUserDTO } from './users.model'
 import characterRouter from '../characters/characters.router'
 
@@ -29,6 +29,20 @@ usersRouter.post(
     try {
       const user = await createUser(req.body)
       res.status(201).json(user)
+    } catch (err) {
+      next(err)
+    }
+  },
+)
+
+// DELETE /api/users/:userId
+usersRouter.delete(
+  '/:userId',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.params
+      await deleteUser(userId)
+      res.sendStatus(204)
     } catch (err) {
       next(err)
     }

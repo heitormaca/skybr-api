@@ -18,3 +18,10 @@ export async function getAllUsers(): Promise<User[]> {
 export async function createUser(data: CreateUserDTO): Promise<User> {
   return prisma.users.create({ data })
 }
+
+/**
+ * Delete um usuário pelo ID.
+ */
+export async function deleteUser(userId: string): Promise<User> {
+  return prisma.users.delete({ where: { id: userId } })
+}
