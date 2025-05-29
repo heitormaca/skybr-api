@@ -1,30 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Request, Response, NextFunction } from 'express'
+import type { ErrorRequestHandler } from 'express'
+import { HttpError } from '../errors/http-error'
 
-export const errorHandler = (
-  error: any,
-  request: Request,
-  response: Response,
-  next: NextFunction,
-) => {
-  // if (error instanceof InvalidTokenError) {
-  //   const message = 'Bad credentials'
+export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
+  if (err instanceof HttpError) {
+    res.status(err.statusCode).json({ message: err.message })
+    return
+  }
 
-  //   response.status(error.status).json({ message })
-
-  //   return
-  // }
-
-  // if (error instanceof UnauthorizedError) {
-  //   const message = 'Requires authentication'
-
-  //   response.status(error.status).json({ message })
-
-  //   return
-  // }
-  const status = 500
-  const message = 'Internal Server Error'
-
-  response.status(status).json({ message })
+  console.error(err)
+  res.status(500).json({ message: 'Internal Server Error' })
 }

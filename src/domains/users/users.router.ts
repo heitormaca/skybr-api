@@ -1,7 +1,15 @@
 import { NextFunction, Request, Response, Router } from 'express'
-import { createUser, deleteUser, getAllUsers } from './users.service'
-import { CreateUserDTO } from './users.model'
+import {
+  cellphoneExists,
+  createUser,
+  createUserWithCharacter,
+  deleteUser,
+  emailExists,
+  getAllUsers,
+} from './users.service'
+import { CreateUserDTO, CreateUserWithCharacterDTO } from './users.model'
 import characterRouter from '../characters/characters.router'
+import { characterNameExists } from '../characters/characters.service'
 
 export const usersRouter = Router()
 
@@ -19,16 +27,60 @@ usersRouter.get(
 )
 
 // POST /api/users
-usersRouter.post(
+usersRouter.post<object, unknown, CreateUserDTO>(
   '/',
-  async (
-    req: Request<object, unknown, CreateUserDTO>,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  async (req, res, next) => {
     try {
+      const { email, cellphone } = req.body
+      const errors: string[] = []
+
+      if (await emailExists(email)) errors.push('Email')
+      if (await cellphoneExists(cellphone)) errors.push('Celular')
+
+      if (errors.length) {
+        const campos = errors.join(' e ')
+        const sufixo =
+          errors.length === 1 ? ' já cadastrado' : ' já cadastrados'
+
+        res.status(409).json({ message: `${campos}${sufixo}` })
+        return
+      }
+
       const user = await createUser(req.body)
       res.status(201).json(user)
+    } catch (err) {
+      next(err)
+    }
+  },
+)
+
+// POST /api/users/onboard
+usersRouter.post<object, unknown, CreateUserWithCharacterDTO>(
+  '/onboard',
+  async (req, res, next) => {
+    try {
+      const {
+        user: { email, cellphone },
+        character: { name },
+      } = req.body
+
+      const errors: string[] = []
+
+      if (await emailExists(email)) errors.push('Email')
+      if (await cellphoneExists(cellphone)) errors.push('Celular')
+      if (await characterNameExists(name)) errors.push('Personagem')
+
+      if (errors.length > 0) {
+        const campos = errors.join(' e ')
+        const sufixo =
+          errors.length === 1 ? ' já cadastrado' : ' já cadastrados'
+
+        res.status(409).json({ message: `${campos}${sufixo}` })
+        return
+      }
+
+      const result = await createUserWithCharacter(req.body)
+      res.status(201).json(result)
     } catch (err) {
       next(err)
     }
