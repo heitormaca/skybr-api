@@ -10,6 +10,7 @@ import {
 import { CreateUserDTO, CreateUserWithCharacterDTO } from './users.model'
 import characterRouter from '../characters/characters.router'
 import { characterNameExists } from '../characters/characters.service'
+import { formatFieldErrors } from '../../utils/functions'
 
 export const usersRouter = Router()
 
@@ -71,7 +72,7 @@ usersRouter.post<object, unknown, CreateUserWithCharacterDTO>(
       if (await characterNameExists(name)) errors.push('Personagem')
 
       if (errors.length > 0) {
-        const campos = errors.join(' e ')
+        const campos = formatFieldErrors(errors)
         const sufixo =
           errors.length === 1 ? ' já cadastrado' : ' já cadastrados'
 
