@@ -1,11 +1,12 @@
-import { Request, Response, NextFunction } from "express";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Request, Response, NextFunction } from 'express'
 
 export const notFoundHandler = (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  const message = "Not Found";
+  const message = 'Not Found'
 
-  response.status(404).json({ message });
-};
+  response.status(404).json({ message })
+}

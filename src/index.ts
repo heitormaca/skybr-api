@@ -11,7 +11,7 @@ dotenv.config()
 
 if (!(process.env.PORT && process.env.CLIENT_URL)) {
   throw new Error(
-    'Missing required environment variables. Check docs for more info.'
+    'Missing required environment variables. Check docs for more info.',
   )
 }
 
@@ -39,7 +39,7 @@ app.use(
     frameguard: {
       action: 'deny',
     },
-  })
+  }),
 )
 
 app.use((req, res, next) => {
@@ -54,7 +54,7 @@ app.use(
     methods: ['GET'],
     allowedHeaders: ['Authorization', 'Content-Type'],
     maxAge: 86400,
-  })
+  }),
 )
 
 app.use('/api', apiRouter)
