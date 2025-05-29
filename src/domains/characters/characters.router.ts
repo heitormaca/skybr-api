@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import {
+  characterNameExists,
   createCharacterForUser,
   getCharactersByUser,
 } from './characters.service'
@@ -27,6 +28,11 @@ router.post(
     next: NextFunction,
   ) => {
     try {
+      const { name } = req.body
+      if (await characterNameExists(name)) {
+        res.status(409).json({ message: 'Nome de personagem já existe' })
+        return
+      }
       const { userId } = req.params
       const character = await createCharacterForUser(userId, req.body)
       res.status(201).json(character)

@@ -28,3 +28,11 @@ export async function createCharacterForUser(
     },
   })
 }
+
+/**
+ * Verifica se já existe algum usuário com o nome dado.
+ */
+export async function characterNameExists(name: string): Promise<boolean> {
+  const count = await prisma.characters.count({ where: { name } })
+  return count > 0
+}
