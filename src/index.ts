@@ -1,3 +1,4 @@
+import path from 'path'
 import cors from 'cors'
 import * as dotenv from 'dotenv'
 import express from 'express'
@@ -7,15 +8,17 @@ import { errorHandler } from './middleware/error.middleware'
 import { notFoundHandler } from './middleware/not-found.middleware'
 import { usersRouter } from './domains/users/users.router'
 
-dotenv.config()
+const env = process.env.NODE_ENV === 'production' ? 'production' : 'development'
+dotenv.config({ path: path.resolve(process.cwd(), `.env.${env}`) })
 
-if (!(process.env.PORT && process.env.CLIENT_URL)) {
-  throw new Error(
-    'Missing required environment variables. Check docs for more info.',
-  )
+const requiredEnvs = ['PORT', 'CLIENT_URL', 'DATABASE_URL']
+for (const key of requiredEnvs) {
+  if (!process.env[key]) {
+    throw new Error(`Missing required environment variable: ${key}`)
+  }
 }
 
-const PORT = parseInt(process.env.PORT, 10)
+const PORT = parseInt(process.env.PORT!, 10)
 const CLIENT_URL = process.env.CLIENT_URL
 
 const app = express()
@@ -42,10 +45,6 @@ app.use(
   }),
 )
 
-app.use((req, res, next) => {
-  res.contentType('application/json; charset=utf-8')
-  next()
-})
 app.use(nocache())
 
 app.use(
@@ -57,6 +56,11 @@ app.use(
   }),
 )
 
+app.use((req, res, next) => {
+  res.contentType('application/json; charset=utf-8')
+  next()
+})
+
 app.use('/api', apiRouter)
 apiRouter.use('/users', usersRouter)
 
@@ -64,5 +68,5 @@ app.use(errorHandler)
 app.use(notFoundHandler)
 
 app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`)
+  console.log(`Listening on port ${PORT} [${env}]`)
 })
