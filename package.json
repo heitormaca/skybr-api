@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node dist/index.js",
-    "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --pretty --transpile-only src/index.ts",
+    "start": "cross-env NODE_ENV=production DOTENV_CONFIG_PATH=.env.production node dist/index.js",
+    "dev": "cross-env NODE_ENV=development DOTENV_CONFIG_PATH=.env.development ts-node-dev --respawn --pretty --transpile-only src/index.ts",
     "build": "tsc",
+    "prisma:pull:dev": "dotenv -e .env.development -- pnpm exec prisma db pull",
+    "prisma:pull:prod": "dotenv -e .env.production -- pnpm exec prisma db pull",
     "lint:staged": "eslint --max-warnings=0 --fix",
     "format": "prettier --write",
     "prepare": "husky"
@@ -30,6 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^8.33.0",
     "@typescript-eslint/parser": "^8.33.0",
     "cross-env": "^7.0.3",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.27.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.4.0",
