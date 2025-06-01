@@ -6,6 +6,7 @@ import {
   deleteUser,
   emailExists,
   getAllUsers,
+  getAllUsersWithCharacters,
 } from './users.service'
 import { CreateUserDTO, CreateUserWithCharacterDTO } from './users.model'
 import characterRouter from '../characters/characters.router'
@@ -26,6 +27,16 @@ usersRouter.get(
     }
   },
 )
+
+// GET /api/users/with-characters
+usersRouter.get('/with-characters', async (req, res, next) => {
+  try {
+    const users = await getAllUsersWithCharacters()
+    res.json(users)
+  } catch (err) {
+    next(err)
+  }
+})
 
 // POST /api/users
 usersRouter.post<object, unknown, CreateUserDTO>(
