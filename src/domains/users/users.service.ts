@@ -8,7 +8,7 @@ import { CreateUserDTO, CreateUserWithCharacterDTO } from './users.model'
 const prisma = new PrismaClient()
 
 /**
- * Retorna todos os usuários cadastrados.
+ * Lista todos os usuários cadastrados.
  */
 export async function getAllUsers(): Promise<User[]> {
   return prisma.users.findMany({
@@ -65,5 +65,15 @@ export async function createUserWithCharacter(
       },
     })
     return { user: newUser, character: newChar }
+  })
+}
+
+/**
+ * Lista todos os usuários cadastrados.
+ */
+export async function getAllUsersWithCharacters() {
+  return prisma.users.findMany({
+    include: { characters: true },
+    orderBy: { created_at: 'desc' },
   })
 }
